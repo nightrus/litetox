@@ -1,0 +1,4 @@
+.env
+mariadb/data/
+data/
+__pycache__/

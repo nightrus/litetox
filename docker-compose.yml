@@ -1,0 +1,56 @@
+name: litetox
+
+services:
+  mariadb:
+    image: mariadb:11
+    container_name: litetox-db
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: litetox
+      MARIADB_USER: litetox
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - ./mariadb/data:/var/lib/mysql
+      - ./mariadb/low-mem.cnf:/etc/mysql/conf.d/low-mem.cnf:ro
+    mem_limit: 256m
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks: [internal]
+    logging: &log
+      driver: json-file
+      options: {max-size: "5m", max-file: "3"}
+
+  litetox:
+    build: .
+    image: litetox:2
+    container_name: litetox
+    restart: unless-stopped
+    depends_on:
+      mariadb: {condition: service_healthy}
+    environment:
+      LISTEN_TCP: "20013"
+      LISTEN_HTTP: "20080"
+      API_TOKEN: ${API_TOKEN}
+      DATA_DIR: /app/data
+      STATUS_POLL: "600"
+      USSD_POLL: "86400"
+      RAW_RETENTION_DAYS: "30"
+      DEFAULT_IMEI: ${DEFAULT_IMEI}
+      DB_HOST: mariadb
+      DB_USER: litetox
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: litetox
+    ports:
+      - "${TCP_PORT:-20013}:20013"
+    volumes:
+      - ./data:/app/data:rw
+    mem_limit: 128m
+    networks: [internal]
+    logging: *log
+
+networks:
+  internal: {}
