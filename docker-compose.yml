@@ -46,7 +46,8 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: litetox
     ports:
-      - "${TCP_PORT:-20013}:20013"
+      - "${TCP_PORT:-20013}:20013"                    # modules (Wialon IPS), must be public
+      - "${HTTP_BIND:-127.0.0.1}:${HTTP_PORT:-20080}:20080"  # HTTP API, put a TLS reverse proxy in front
     volumes:
       - ./data:/app/data:rw
     mem_limit: 128m
