@@ -17,13 +17,27 @@ Wialon IPS прокси для GSM-модулей **ALTOX** (WBUS-5 GPS, GSM-5 �
 
 ```sh
 git clone https://github.com/nightrus/litetox.git && cd litetox
-cp .env.example .env      # задайте API_TOKEN, DB_PASSWORD, DB_ROOT_PASSWORD
+cp .env.example .env      # задайте API_TOKEN, DB_PASSWORD, DB_ROOT_PASSWORD и DOMAIN
 docker compose up -d --build
 ```
 
+В составе три контейнера: `litetox` (прокси), `litetox-db` (MariaDB) и `litetox-caddy` (HTTPS).
+
 - TCP `20013` (Wialon IPS) должен быть открыт в интернет: на него подключается модуль.
-- HTTP API по умолчанию слушает только `127.0.0.1:20080`. Поставьте перед ним reverse proxy с TLS (Caddy, nginx) и укажите получившийся `https://` адрес в Home Assistant. Если reverse proxy работает в другой docker-сети, подключите её через `docker-compose.override.yml`.
+- HTTP API наружу не публикуется. Его отдаёт Caddy по `https://<DOMAIN>` с автоматическим сертификатом Let's Encrypt. Для этого A-запись домена должна указывать на сервер, а порты 80 и 443 должны быть открыты. Этот адрес указывается в Home Assistant.
 - MariaDB настроена под маленький VPS (`mariadb/low-mem.cnf`, ~70 МБ).
+
+### Свой reverse proxy вместо Caddy
+
+Если на сервере уже есть reverse proxy (Caddy, nginx, Traefik), встроенный Caddy можно отключить, а прокси подключить к общей docker-сети. Пример `docker-compose.override.yml` (compose подхватывает его автоматически):
+
+```yaml
+services:
+  caddy:
+    profiles: [disabled]   # не запускать встроенный Caddy
+```
+
+После этого подключите свой reverse proxy к сети `litetox-web` (имя задаётся `WEB_NETWORK`) как к внешней (`external: true`) и проксируйте домен на `http://litetox:20080`. Можно и наоборот: подключить `litetox` к уже существующей сети вашего reverse proxy, добавив её в `networks` сервиса в том же override.
 
 ### Настройка модуля
 
@@ -42,8 +56,9 @@ ALTOX-сервер модулю указывать не нужно: на нег�
 | `API_TOKEN` | — | Bearer-токен для HTTP API (обязательно) |
 | `DB_PASSWORD`, `DB_ROOT_PASSWORD` | — | пароли MariaDB |
 | `ALTOX_UPSTREAM` | `d2.altox.app:20332` | ALTOX SERVER 2.0 по умолчанию (`host:port`, пусто = без зеркала); для каждого IMEI можно переопределить из Home Assistant |
+| `DOMAIN` | — | домен HTTPS API для встроенного Caddy |
 | `TCP_PORT` | `20013` | внешний порт для модулей |
-| `HTTP_BIND`, `HTTP_PORT` | `127.0.0.1`, `20080` | где опубликован HTTP API |
+| `WEB_NETWORK` | `litetox-web` | имя docker-сети, общей с reverse proxy |
 | `STATUS_POLL` | `600` | раз во сколько секунд запрашивать `cmd_STATUS` |
 | `USSD_POLL` | `86400` | раз во сколько секунд запрашивать баланс (`cmd_ussd`) |
 | `RAW_RETENTION_DAYS` | `30` | сколько хранить журнал сырых кадров |
@@ -67,7 +82,7 @@ ALTOX-сервер модулю указывать не нужно: на нег�
 Пример:
 
 ```sh
-curl -H "Authorization: Bearer $API_TOKEN" -X POST https://proxy.example.com/cmd/<imei> \
+curl -H "Authorization: Bearer $API_TOKEN" -X POST https://litetox.example.com/cmd/<imei> \
      -d '{"command": "START:30"}'
 ```
 

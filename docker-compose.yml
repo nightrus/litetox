@@ -36,9 +36,9 @@ services:
       LISTEN_HTTP: "20080"
       API_TOKEN: ${API_TOKEN}
       DATA_DIR: /app/data
-      STATUS_POLL: "600"
-      USSD_POLL: "86400"
-      RAW_RETENTION_DAYS: "30"
+      STATUS_POLL: ${STATUS_POLL:-600}
+      USSD_POLL: ${USSD_POLL:-86400}
+      RAW_RETENTION_DAYS: ${RAW_RETENTION_DAYS:-30}
       DEFAULT_IMEI: ${DEFAULT_IMEI}
       ALTOX_UPSTREAM: ${ALTOX_UPSTREAM:-d2.altox.app:20332}
       DB_HOST: mariadb
@@ -46,13 +46,36 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: litetox
     ports:
-      - "${TCP_PORT:-20013}:20013"                    # modules (Wialon IPS), must be public
-      - "${HTTP_BIND:-127.0.0.1}:${HTTP_PORT:-20080}:20080"  # HTTP API, put a TLS reverse proxy in front
+      - "${TCP_PORT:-20013}:20013"   # modules (Wialon IPS), must be reachable from the internet
     volumes:
       - ./data:/app/data:rw
     mem_limit: 128m
-    networks: [internal]
+    networks: [internal, web]   # HTTP API (:20080) is reachable only through the web network
+    logging: *log
+
+  # HTTPS for the API with an automatic Let's Encrypt certificate for ${DOMAIN}.
+  # Already have a reverse proxy? Disable this service in docker-compose.override.yml and
+  # attach your proxy to the web network (WEB_NETWORK) -> http://litetox:20080
+  caddy:
+    image: caddy:2-alpine
+    container_name: litetox-caddy
+    restart: unless-stopped
+    depends_on: [litetox]
+    environment:
+      DOMAIN: ${DOMAIN:?set DOMAIN in .env}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./caddy/data:/data
+      - ./caddy/config:/config
+    mem_limit: 64m
+    networks: [web]
     logging: *log
 
 networks:
   internal: {}
+  # named so that a reverse proxy from another compose project can join it as an external network
+  web:
+    name: ${WEB_NETWORK:-litetox-web}

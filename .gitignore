@@ -3,3 +3,5 @@ mariadb/data/
 data/
 __pycache__/
 docker-compose.override.yml
+caddy/data/
+caddy/config/
