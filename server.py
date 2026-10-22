@@ -1,6 +1,8 @@
-"""litetox — minimal Wialon IPS server for ALTOX heater/tracker modules.
+"""litetox proxy — Wialon IPS proxy for ALTOX heater/tracker modules.
 
 TCP (Wialon IPS 1.1/2.0) <- modules, HTTP JSON API -> Home Assistant (ha-litetox).
+Each device session is mirrored to ALTOX SERVER 2.0 (per-device host:port, default
+ALTOX_UPSTREAM), so the official ALTOX app keeps working.
 Only IMEIs registered in the `devices` table (enabled=1) may log in.
 Everything is stored in MariaDB; current per-device state lives in memory and
 is snapshotted to devices.state so it survives restarts.
@@ -29,6 +31,7 @@ RAW_RETENTION_DAYS = int(os.environ.get("RAW_RETENTION_DAYS", "30"))
 ONLINE_TIMEOUT = int(os.environ.get("ONLINE_TIMEOUT", "180"))
 # Mirror every device session to the official ALTOX server ("host:port", empty = off): the module
 # talks only to us, the ALTOX app keeps working, and the commands ALTOX sends are logged.
+# Default for devices whose devices.upstream is NULL (set per device via POST /devices).
 ALTOX_UPSTREAM = os.environ.get("ALTOX_UPSTREAM", "")
 # legacy /state and /cmd (no imei) map to this device; kept until HA is migrated
 DEFAULT_IMEI = os.environ.get("DEFAULT_IMEI", "")
@@ -41,7 +44,7 @@ DB = dict(
     database=os.environ.get("DB_NAME", "litetox"),
 )
 
-VERSION = "2.0.0"
+VERSION = "2.1.0"
 
 
 # ---------------------------------------------------------------- logging
@@ -87,6 +90,8 @@ SCHEMA = [
         last_ip VARCHAR(64) NULL,
         state LONGTEXT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4""",
+    # ALTOX server "host:port" for this device: NULL = ALTOX_UPSTREAM, '' = mirror off
+    "ALTER TABLE devices ADD COLUMN IF NOT EXISTS upstream VARCHAR(255) NULL",
     """CREATE TABLE IF NOT EXISTS positions (
         id BIGINT AUTO_INCREMENT PRIMARY KEY,
         imei VARCHAR(32) NOT NULL,
@@ -319,15 +324,31 @@ class Device:
         self.login_at = 0.0
         self.next_status = 0.0
         self.dirty = False
-        self.up = Upstream(self) if ALTOX_UPSTREAM else None
+        self.login_frame = None
+        self.target = ""
+        self.up = None
         self.worker = asyncio.create_task(command_worker(self))
 
     @property
     def online(self):
         return self.writer is not None and time.time() - self.last_seen < ONLINE_TIMEOUT
 
+    def set_upstream(self, target):
+        """(Re)point the ALTOX mirror; restarts it right away if the module is connected."""
+        if target == self.target:
+            return
+        if self.up:
+            self.up.stop()
+        self.target = target
+        self.up = Upstream(self, target) if target else None
+        log("upstream", self.imei, target or "off")
+        if self.up and self.writer and self.login_frame:
+            self.up.start(self.login_frame)
+
     def public_state(self):
         s = {k: v for k, v in self.state.items() if not k.startswith("_")}
+        s.update(altox_upstream=self.target or None,
+                 altox_connected=bool(self.up and self.up.writer))
         s.update(imei=self.imei, name=self.name, online=self.online,
                  last_seen=iso(datetime.fromtimestamp(self.last_seen, timezone.utc).replace(microsecond=0))
                  if self.last_seen else self.state.get("last_seen"))
@@ -345,13 +366,13 @@ class Upstream:
     the regular queue (origin 'altox'), so the module's reply reaches both servers.
     raw_log directions: 'a' = frame from ALTOX, 'u' = upstream connection events."""
 
-    def __init__(self, d):
+    def __init__(self, d, target):
         self.d = d
         self.login = None
         self.queue = asyncio.Queue()
         self.writer = None
         self.task = None
-        self.host, _, port = ALTOX_UPSTREAM.rpartition(":")
+        self.host, _, port = target.rpartition(":")
         self.port = int(port)
 
     def start(self, login):
@@ -420,7 +441,7 @@ class Upstream:
 
 
 async def load_devices():
-    rows = await db.all("SELECT imei, name, enabled, state, last_seen FROM devices")
+    rows = await db.all("SELECT imei, name, enabled, state, last_seen, upstream FROM devices")
     seen = set()
     for r in rows:
         if not r["enabled"]:
@@ -434,10 +455,10 @@ async def load_devices():
         if r["last_seen"]:
             st["last_seen"] = iso(r["last_seen"].replace(tzinfo=timezone.utc))
         d = DEVICES.get(r["imei"])
-        if d:
-            d.name = r["name"]
-        else:
-            DEVICES[r["imei"]] = Device(r["imei"], r["name"], st)
+        if not d:
+            d = DEVICES[r["imei"]] = Device(r["imei"], r["name"], st)
+        d.name = r["name"]
+        d.set_upstream(ALTOX_UPSTREAM if r["upstream"] is None else r["upstream"])
     for imei in list(DEVICES):
         if imei not in seen:
             await drop_device(imei)
@@ -697,6 +718,7 @@ async def handle(reader, writer):
                     writer.write(b"#AL#1\r\n")
                     await writer.drain()
                     log("login ok", imei, peer)
+                    d.login_frame = s
                     if d.up:
                         d.up.start(s)
                     continue
@@ -763,6 +785,7 @@ async def route(d, s):
 
 # ---------------------------------------------------------------- HTTP API
 IMEI_RE = re.compile(r"^[0-9A-Za-z_-]{4,32}$")
+UPSTREAM_RE = re.compile(r"^[0-9A-Za-z.-]{1,253}:(\d{1,5})$")
 
 
 @web.middleware
@@ -800,9 +823,18 @@ async def h_register(request):
     name = str(body.get("name", "")).strip()[:100]
     if not IMEI_RE.match(imei):
         return web.json_response({"error": "bad imei"}, status=400)
+    # optional "upstream": "host:port" = ALTOX server, "" = mirror off, null = server default
+    upstream = body.get("upstream", ...)
+    if upstream not in (..., None):
+        upstream = str(upstream).strip()
+        m = UPSTREAM_RE.match(upstream)
+        if upstream and not (m and 0 < int(m.group(1)) < 65536):
+            return web.json_response({"error": "bad upstream, expected host:port"}, status=400)
     await db.q("INSERT INTO devices (imei, name, enabled, created_at) VALUES (%s,%s,1,%s) "
                "ON DUPLICATE KEY UPDATE enabled=1, name=IF(%s='', name, %s)",
                (imei, name, utcnow(), name, name))
+    if upstream is not ...:
+        await db.q("UPDATE devices SET upstream=%s WHERE imei=%s", (upstream, imei))
     await load_devices()
     return web.json_response({"ok": True, "device": DEVICES[imei].public_state()})
 
@@ -946,7 +978,7 @@ async def main():
     asyncio.create_task(housekeeping())
     asyncio.create_task(poller())
     srv = await asyncio.start_server(handle, "0.0.0.0", LISTEN_TCP)
-    log(f"litetox {VERSION} tcp:{LISTEN_TCP} http:{LISTEN_HTTP} poll:{STATUS_POLL}s ussd:{USSD_POLL}s")
+    log(f"litetox proxy {VERSION} tcp:{LISTEN_TCP} http:{LISTEN_HTTP} poll:{STATUS_POLL}s ussd:{USSD_POLL}s")
     async with srv:
         await srv.serve_forever()
 
