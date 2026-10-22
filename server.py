@@ -25,6 +25,7 @@ API_TOKEN = os.environ.get("API_TOKEN", "")
 DATA_DIR = os.environ.get("DATA_DIR", "/app/data")
 STATUS_POLL = int(os.environ.get("STATUS_POLL", "600"))     # cmd_STATUS every 10 min
 USSD_POLL = int(os.environ.get("USSD_POLL", "86400"))       # cmd_ussd once a day
+DIAG_POLL = int(os.environ.get("DIAG_POLL", "3600"))        # cmd_READ (Webasto errors) hourly
 RAW_RETENTION_DAYS = int(os.environ.get("RAW_RETENTION_DAYS", "30"))
 ONLINE_TIMEOUT = int(os.environ.get("ONLINE_TIMEOUT", "180"))
 # legacy /state and /cmd (no imei) map to this device; kept until HA is migrated
@@ -529,7 +530,7 @@ async def command_worker(d):
 
 
 async def poller():
-    """Periodic cmd_STATUS / cmd_ussd for online devices. Schedules survive
+    """Periodic cmd_STATUS / cmd_ussd / cmd_READ for online devices. Schedules survive
     reconnects (the module re-logs in every few minutes on mobile networks)."""
     while True:
         await asyncio.sleep(15)
@@ -543,6 +544,10 @@ async def poller():
             if now - d.state.get("_ussd_epoch", 0) >= USSD_POLL:
                 d.state["_ussd_epoch"] = now
                 await enqueue(d, "cmd_ussd", "poller")
+                await save_state(d)
+            if DIAG_POLL and now - d.state.get("_diag_epoch", 0) >= DIAG_POLL:
+                d.state["_diag_epoch"] = now
+                await enqueue(d, "cmd_READ", "poller")
                 await save_state(d)
 
 
@@ -837,7 +842,7 @@ async def main():
     asyncio.create_task(housekeeping())
     asyncio.create_task(poller())
     srv = await asyncio.start_server(handle, "0.0.0.0", LISTEN_TCP)
-    log(f"litetox {VERSION} tcp:{LISTEN_TCP} http:{LISTEN_HTTP} poll:{STATUS_POLL}s ussd:{USSD_POLL}s")
+    log(f"litetox {VERSION} tcp:{LISTEN_TCP} http:{LISTEN_HTTP} poll:{STATUS_POLL}s ussd:{USSD_POLL}s diag:{DIAG_POLL}s")
     async with srv:
         await srv.serve_forever()
 
