@@ -462,6 +462,22 @@ async def on_cells(d, text):
     await answer_command(d, "C", text)
 
 
+def parse_diag(text):
+    """#E# reply to cmd_READ: 'Webasto diagnostics\nError code: none' (code text as the module sends it)."""
+    m = re.search(r"Error code:\s*(.+)", text, re.I)
+    code = m.group(1).strip() if m else None
+    return None if not code or code.lower() in ("none", "no", "0") else code
+
+
+async def on_diag(d, text):
+    st = d.state
+    st["webasto_error"] = parse_diag(text)
+    st["webasto_diag_raw"] = text.replace("\n", " | ")
+    st["webasto_diag_ts"] = iso(utcnow())
+    d.dirty = True
+    await answer_command(d, "E", text)
+
+
 async def answer_command(d, rtype, text):
     """Attach a module reply to the latest sent, unanswered command (within 3 min)."""
     await db_safe(db.q(
@@ -627,6 +643,9 @@ async def route(d, s):
         return "#AM#1\r\n"
     if s.startswith("#C#"):
         await on_cells(d, s[3:])
+        return "#AM#1\r\n"
+    if s.startswith("#E#"):
+        await on_diag(d, s[3:])
         return "#AM#1\r\n"
     if s.startswith("#M#"):
         return "#AM#1\r\n"
