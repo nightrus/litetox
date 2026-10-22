@@ -87,3 +87,7 @@ curl -H "Authorization: Bearer $API_TOKEN" -X POST https://litetox.example.com/c
 ```
 
 Команды модуля описаны в инструкции ALTOX: `STATUS`, `START`, `START:30`, `STOP`, `ussd`, `gsminfo`, `READ`, `ACTIVATE`/`DEACTIVATE` и др. Между `ussd` и следующей командой прокси сам выдерживает паузу: активная USSD-сессия модуля «съедает» следующую команду.
+
+## Лицензия
+
+[GPL-3.0](LICENSE) © nightrus. Изменённые версии можно распространять только открыто и под той же лицензией.
