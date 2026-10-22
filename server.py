@@ -522,10 +522,24 @@ async def on_heater(d, text):
     await answer_command(d, "W", text)
 
 
+def is_settings(text):
+    """cmd_SETTINGS reply also arrives as #U#: 'W1 R1 B0 T30,0,0\nE10 …;ID:<imei>…S"<ip>","<port>"…'."""
+    return ";ID:" in text and re.search(r'^S"[^"]*","\d+"', text, re.M) is not None
+
+
 async def on_ussd(d, text):
-    u = parse_ussd(text)
     now = utcnow()
     st = d.state
+    if is_settings(text):
+        st["settings_raw"] = text.replace("\n", " | ")
+        st["settings_ts"] = iso(now)
+        fw = parse_ussd(text)["firmware"]
+        if fw:
+            st["firmware"] = fw
+        d.dirty = True
+        await answer_command(d, "U", text)
+        return
+    u = parse_ussd(text)
     st["ussd_raw"] = text.replace("\n", " ")
     st["ussd_ts"] = iso(now)
     if u["balance"] is not None:
