@@ -40,6 +40,7 @@ services:
       USSD_POLL: "86400"
       RAW_RETENTION_DAYS: "30"
       DEFAULT_IMEI: ${DEFAULT_IMEI}
+      ALTOX_UPSTREAM: ${ALTOX_UPSTREAM:-d2.altox.app:20332}
       DB_HOST: mariadb
       DB_USER: litetox
       DB_PASSWORD: ${DB_PASSWORD}

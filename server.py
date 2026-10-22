@@ -27,6 +27,9 @@ STATUS_POLL = int(os.environ.get("STATUS_POLL", "600"))     # cmd_STATUS every 1
 USSD_POLL = int(os.environ.get("USSD_POLL", "86400"))       # cmd_ussd once a day
 RAW_RETENTION_DAYS = int(os.environ.get("RAW_RETENTION_DAYS", "30"))
 ONLINE_TIMEOUT = int(os.environ.get("ONLINE_TIMEOUT", "180"))
+# Mirror every device session to the official ALTOX server ("host:port", empty = off): the module
+# talks only to us, the ALTOX app keeps working, and the commands ALTOX sends are logged.
+ALTOX_UPSTREAM = os.environ.get("ALTOX_UPSTREAM", "")
 # legacy /state and /cmd (no imei) map to this device; kept until HA is migrated
 DEFAULT_IMEI = os.environ.get("DEFAULT_IMEI", "")
 
@@ -316,6 +319,7 @@ class Device:
         self.login_at = 0.0
         self.next_status = 0.0
         self.dirty = False
+        self.up = Upstream(self) if ALTOX_UPSTREAM else None
         self.worker = asyncio.create_task(command_worker(self))
 
     @property
@@ -331,6 +335,88 @@ class Device:
 
 
 DEVICES: dict[str, Device] = {}
+
+
+class Upstream:
+    """Mirror of one device session at the ALTOX server.
+
+    Device frames go there verbatim (login first). ALTOX acks (#A..#) are only logged — litetox
+    already acks the module; anything else from ALTOX is a command and goes to the module through
+    the regular queue (origin 'altox'), so the module's reply reaches both servers.
+    raw_log directions: 'a' = frame from ALTOX, 'u' = upstream connection events."""
+
+    def __init__(self, d):
+        self.d = d
+        self.login = None
+        self.queue = asyncio.Queue()
+        self.writer = None
+        self.task = None
+        self.host, _, port = ALTOX_UPSTREAM.rpartition(":")
+        self.port = int(port)
+
+    def start(self, login):
+        """Device logged in: (re)open the mirror session."""
+        self.stop()
+        self.login = login
+        self.queue = asyncio.Queue()
+        self.task = asyncio.create_task(self._run())
+
+    def stop(self):
+        if self.task:
+            self.task.cancel()
+            self.task = None
+        if self.writer:
+            self.writer.close()
+            self.writer = None
+
+    def send(self, frame):
+        if self.task:
+            self.queue.put_nowait(frame)
+
+    async def _run(self):
+        target = f"{self.host}:{self.port}"
+        while True:
+            try:
+                reader, self.writer = await asyncio.wait_for(asyncio.open_connection(self.host, self.port), 15)
+                await raw(self.d.imei, "u", target, "connected")
+                self.writer.write((self.login + "\r\n").encode("latin1"))
+                reader_task = asyncio.create_task(self._read(reader, target))
+                try:
+                    while True:
+                        getter = asyncio.create_task(self.queue.get())
+                        done, _ = await asyncio.wait({getter, reader_task}, return_when=asyncio.FIRST_COMPLETED)
+                        if getter not in done:
+                            getter.cancel()
+                            break
+                        self.writer.write((getter.result() + "\r\n").encode("latin1"))
+                        await self.writer.drain()
+                finally:
+                    reader_task.cancel()
+                await raw(self.d.imei, "u", target, "closed by ALTOX")
+            except asyncio.CancelledError:
+                raise
+            except Exception as e:
+                await raw(self.d.imei, "u", target, f"error: {e!r}")
+            if self.writer:
+                self.writer.close()
+                self.writer = None
+            await asyncio.sleep(10)  # reconnect; queued frames wait
+
+    async def _read(self, reader, target):
+        buf = b""
+        while True:
+            data = await reader.read(4096)
+            if not data:
+                return
+            buf += data
+            while b"\r\n" in buf:
+                frame, buf = buf.split(b"\r\n", 1)
+                s = frame.decode("latin1", errors="replace")
+                await raw(self.d.imei, "a", target, s)
+                if not s or re.match(r"#A[A-Z]*#", s):
+                    continue
+                log("ALTOX command", self.d.imei, s)
+                await enqueue(self.d, s, "altox")
 
 
 async def load_devices():
@@ -361,6 +447,8 @@ async def drop_device(imei):
     d = DEVICES.pop(imei, None)
     if d:
         d.worker.cancel()
+        if d.up:
+            d.up.stop()
         if d.writer:
             d.writer.close()
 
@@ -372,7 +460,8 @@ async def save_state(d):
 
 
 async def raw(imei, direction, peer, frame):
-    rawlog(("< " if direction == "<" else "> ") + (f"[{imei}] " if imei else "") + frame)
+    tag = {"<": "< ", ">": "> ", "a": "ALTOX< ", "u": "ALTOX* "}.get(direction, direction + " ")
+    rawlog(tag + (f"[{imei}] " if imei else "") + frame)
     await db_safe(db.q("INSERT INTO raw_log (imei, ts, direction, peer, frame) VALUES (%s,%s,%s,%s,%s)",
                        (imei, utcnow(), direction, peer, frame[:4000])))
 
@@ -594,9 +683,13 @@ async def handle(reader, writer):
                     writer.write(b"#AL#1\r\n")
                     await writer.drain()
                     log("login ok", imei, peer)
+                    if d.up:
+                        d.up.start(s)
                     continue
                 d.last_seen = time.time()
                 await raw(d.imei, "<", peer, s)
+                if d.up:
+                    d.up.send(s)
                 ack = await route(d, s)
                 if ack:
                     writer.write(ack.encode())
@@ -616,6 +709,8 @@ async def handle(reader, writer):
         writer.close()
         if d and d.writer is writer:
             d.writer = None
+            if d.up:
+                d.up.stop()
             await save_state(d)
         log("closed", peer)
 
