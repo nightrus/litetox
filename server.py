@@ -44,7 +44,7 @@ DB = dict(
     database=os.environ.get("DB_NAME", "litetox"),
 )
 
-VERSION = "2.1.0"
+VERSION = "2.1.1"
 
 
 # ---------------------------------------------------------------- logging
@@ -292,7 +292,8 @@ def parse_heater(text):
 
 
 def parse_ussd(text):
-    m = re.search(r"(-?[0-9]+(?:[.,][0-9]+)?)\s*r\.", text)
+    # operator replies vary: "97.1 r.", "Vash balans: 97.1 rub.", "97,10 руб"
+    m = re.search(r"(-?[0-9]+(?:[.,][0-9]+)?)\s*(?:r(?:ub)?\.|руб|р\.)", text, re.I)
     fw = re.search(r"Fw:([^ ;|\r\n]+)", text)
     return {
         "balance": float(m.group(1).replace(",", ".")) if m else None,
