@@ -1,0 +1,1445 @@
+{
+ "source": "https://altox.ru/docs/webasto-code",
+ "codes": [
+  {
+   "code": "01",
+   "en": "Defective control unit",
+   "ru": "Неисправность блока управления (неисправен блок управления, ошибка в программе EOL или неисправен датчик температуры ОЖ)",
+   "advice": "Стереть ошибку, снять блокировку на подогревателе повторно запустить подогреватель"
+  },
+  {
+   "code": "02",
+   "en": "No start",
+   "ru": "Не запускается (за установленное время пламя не обнаружено)",
+   "advice": "1) Причина в заборе воздуха или в магистрали отвода выхлопных газов. 2) Причина в топливной системе. 3) Проверьте насос­дозатор. 4) Проверьте электрическую систему штифта накала."
+  },
+  {
+   "code": "03",
+   "en": "Flame failure",
+   "ru": "Обрыв пламени (срыв горения)",
+   "advice": ""
+  },
+  {
+   "code": "04",
+   "en": "Supply voltage too high",
+   "ru": "Напряжение питания слишком высокое",
+   "advice": "Проверьте энергоснабжение бортовой сети автомобиля"
+  },
+  {
+   "code": "05",
+   "en": "Flame was detected prior to combustion",
+   "ru": "Пламя обнаружено до начала подачи топлива",
+   "advice": "1) Причина в заборе воздуха или в магистрали отвода выхлопных газов.2) Причина в топливной системе. 3) Проверьте электрическую систему штифта накала"
+  },
+  {
+   "code": "06",
+   "en": "Heating unit overheated",
+   "ru": "Отопитель перегрет",
+   "advice": ""
+  },
+  {
+   "code": "07",
+   "en": "Heating unit interlocked",
+   "ru": "Отопитель заблокирован",
+   "advice": ""
+  },
+  {
+   "code": "08",
+   "en": "Metering pump short circuit",
+   "ru": "Дозирующий (топливный) насос - короткое замыкание",
+   "advice": "Проверьте электрическую систему топливоподачи"
+  },
+  {
+   "code": "09",
+   "en": "Combustion air fan short circuit",
+   "ru": "Вентилятор каммеры сгорания - короткое замыкание",
+   "advice": ""
+  },
+  {
+   "code": "0a",
+   "en": "Glow plug / flame monitor short circuit",
+   "ru": "Штифт накаливания / датчик пламени - короткое замыкание",
+   "advice": ""
+  },
+  {
+   "code": "0b",
+   "en": "Circulation pump short circuit",
+   "ru": "Циркуляционный (водяной) насос - короткое замыкание (или произошла перегрузка мотора)",
+   "advice": "Circulation pump short circuit"
+  },
+  {
+   "code": "0c",
+   "en": "No comunication to air condition",
+   "ru": "Нет связи с блоком кондиционера",
+   "advice": ""
+  },
+  {
+   "code": "0d",
+   "en": "Green LED short circuit",
+   "ru": "Зеленый светодиод - короткое замыкание",
+   "advice": ""
+  },
+  {
+   "code": "0e",
+   "en": "Yellow LED short circuit",
+   "ru": "Желтый светодиод - короткое замыкание",
+   "advice": ""
+  },
+  {
+   "code": "0f",
+   "en": "No configuraton signal",
+   "ru": "Нет конфигурационного сигнала",
+   "advice": ""
+  },
+  {
+   "code": "10",
+   "en": "Solenoid valve short circuit",
+   "ru": "Электромагнитный клапан (водяной) - короткое замыкание",
+   "advice": "Проверьте электрическую систему клапана переключения ОЖ"
+  },
+  {
+   "code": "11",
+   "en": "ECU wrong coded",
+   "ru": "ECU - неверно закодирован или неправильно установленный подогреватель (относительно вида топлива)",
+   "advice": "Эта ошибка может появиться только в автомобилях оснащенных шиной СAN или LIN: сравните данные на заводской табличке с видом топлива автомобиля. Действуйте далее согласно данных производителя автомобиля."
+  },
+  {
+   "code": "12",
+   "en": "W-Bus comunication failure",
+   "ru": "W-Bus - ошибка связи",
+   "advice": ""
+  },
+  {
+   "code": "13",
+   "en": "Vehicle fan relay short circuit",
+   "ru": "Реле вентилятора салона - короткое замыкание",
+   "advice": "Причина в области вентилятора автомобиля"
+  },
+  {
+   "code": "14",
+   "en": "Temperature sensor short circuit",
+   "ru": "Датчик температуры ОЖ - короткое замыкание",
+   "advice": ""
+  },
+  {
+   "code": "15",
+   "en": "Combustion air fan blocked",
+   "ru": "Вентилятор камеры сгорания - заблокирован",
+   "advice": "Причина в нагнетателе или в системе забора воздуха для горения (засорен трубопровод)"
+  },
+  {
+   "code": "16",
+   "en": "Battery main switch short circuit",
+   "ru": "Главный выключатель питания - короткое замыкание",
+   "advice": ""
+  },
+  {
+   "code": "17",
+   "en": "Invalid air flow reduction",
+   "ru": "Ошибка сокращения воздушного потока",
+   "advice": ""
+  },
+  {
+   "code": "18",
+   "en": "Comunication failure on customer specific bus",
+   "ru": "Сбой связи на шине данных заказчика",
+   "advice": ""
+  },
+  {
+   "code": "19",
+   "en": "Glow plug / electronic ignition short circuit",
+   "ru": "Штифт накаливания / электронный поджиг - короткое замыкание",
+   "advice": "Проверьте электрическую систему штифта накала"
+  },
+  {
+   "code": "1a",
+   "en": "Flame sensor short circuit",
+   "ru": "Датчик пламени - Короткое замыкание",
+   "advice": ""
+  },
+  {
+   "code": "1b",
+   "en": "Overheat short circuit",
+   "ru": "Датчик перегрева - короткое замыкание",
+   "advice": "Проверьте электрическую систему температурных датчиков."
+  },
+  {
+   "code": "1c",
+   "en": "Fault 28",
+   "ru": "Ошибка 28",
+   "advice": ""
+  },
+  {
+   "code": "1d",
+   "en": "Solenoid valve shed test short circuit",
+   "ru": "Электромагнитный клапан - обнаружено короткое замыкание",
+   "advice": ""
+  },
+  {
+   "code": "1e",
+   "en": "Fuel sensor short circuit",
+   "ru": "Датчик топлива - короткое замыкание",
+   "advice": ""
+  },
+  {
+   "code": "1f",
+   "en": "Nozzle stock heating short circuit",
+   "ru": "Подогреватель топливной форсунки - короткое замыкание",
+   "advice": ""
+  },
+  {
+   "code": "20",
+   "en": "Operation indicator short circuit",
+   "ru": "Индикатор работы - короткое замыкание",
+   "advice": ""
+  },
+  {
+   "code": "21",
+   "en": "Flame indicator short circuit",
+   "ru": "Интикатор пламени - короткое замыкание",
+   "advice": ""
+  },
+  {
+   "code": "22",
+   "en": "Reference resistance wrong",
+   "ru": "Образцовое сопротивление - неверное значение",
+   "advice": ""
+  },
+  {
+   "code": "23",
+   "en": "Crash interlock activated",
+   "ru": "Блокировка при аварии - активирована",
+   "advice": ""
+  },
+  {
+   "code": "24",
+   "en": "Car is almost out of fuel",
+   "ru": "Низкий уровень топлива",
+   "advice": ""
+  },
+  {
+   "code": "25",
+   "en": "Fuel pre heating short circuit",
+   "ru": "Предварительный подогреватель топлива - короткое замыкание",
+   "advice": ""
+  },
+  {
+   "code": "26",
+   "en": "PCB temperatur sensor short circuit",
+   "ru": "Датчик температуры блока управления - короткое замыкание",
+   "advice": ""
+  },
+  {
+   "code": "27",
+   "en": "Ground contact to the ECU broken",
+   "ru": "Заземление блока управления - нарушено",
+   "advice": ""
+  },
+  {
+   "code": "28",
+   "en": "Board net energy manager low power voltage",
+   "ru": "Бортовой распределить энергии - низкое напряжение",
+   "advice": ""
+  },
+  {
+   "code": "29",
+   "en": "Fuel priming still not done",
+   "ru": "Заливка топлива еще выполняется",
+   "advice": ""
+  },
+  {
+   "code": "2a",
+   "en": "Error in the radio telegram",
+   "ru": "Ошибка в радиотелеграмме (ошибка в радиопакете данных)",
+   "advice": ""
+  },
+  {
+   "code": "2b",
+   "en": "Telestart still not programmed",
+   "ru": "Телестарт еще не запрограммирован",
+   "advice": ""
+  },
+  {
+   "code": "2c",
+   "en": "The pressure sensor has short circuit",
+   "ru": "Датчик давления имеет короткое замыкание",
+   "advice": ""
+  },
+  {
+   "code": "2d",
+   "en": "The combustion air fan power circuit is defective",
+   "ru": "Неисправность в цепи нагнетателя (число оборотов вращения мотора нагнетателя ниже необходимого значения)",
+   "advice": "Стереть ошибку, снять блокировку на подогревателе повторно запустить подогреватель"
+  },
+  {
+   "code": "2e",
+   "en": "The glow / ignition- element power circuit is defective",
+   "ru": "Неисправность в цепи штифта накала (сопротивление штифта накала находится вне допустимых значений)",
+   "advice": "При повторном возникновении (>3): причина в заборе воздуха или в магистрали отводе выхлопных газов. Проверьте электрическую цепь штифта накала."
+  },
+  {
+   "code": "2f",
+   "en": "Flame abort",
+   "ru": "Обрыв пламени",
+   "advice": "В случае частого возникновения (>10 раз): 1) Причина в заборе воздуха или в магистрали отвода выхлопных газов. 2) Причина в топливной системе. 3) Проверьте насос­дозатор. 4) Проверьте электрическую систему штифта накала."
+  },
+  {
+   "code": "30",
+   "en": "Fault 48",
+   "ru": "Ошибка 48",
+   "advice": ""
+  },
+  {
+   "code": "31",
+   "en": "Fault 49",
+   "ru": "Ошибка 49",
+   "advice": ""
+  },
+  {
+   "code": "32",
+   "en": "No start from control idle period",
+   "ru": "Не запускается из режима Регулируемой паузы",
+   "advice": ""
+  },
+  {
+   "code": "33",
+   "en": "Flame monitor signal invalid",
+   "ru": "Датчик пламени - неверное значение",
+   "advice": ""
+  },
+  {
+   "code": "34",
+   "en": "Default values entered",
+   "ru": "Значения по-умолчанию введены",
+   "advice": ""
+  },
+  {
+   "code": "35",
+   "en": "EOL programming has not been carried out",
+   "ru": "Программирование EOL не было выполнено",
+   "advice": ""
+  },
+  {
+   "code": "36",
+   "en": "Thermal fuse short circuit",
+   "ru": "Короткое замыкание плавкого предохранителя",
+   "advice": ""
+  },
+  {
+   "code": "37",
+   "en": "Coolant temperature during initial start-up too high",
+   "ru": "Слишком высокая температура ОЖ при первом вводе в эксплуатацию",
+   "advice": "Данная ошибка может появляться только при первом вводе подогревателя в эксплуатацию (у производителя автомобиля): 1) Дайте остыть контуру ОЖ и попробуйте повторно ввести подогреватель в работу. 2) Проверьте электрическую систему температурных датчиков"
+  },
+  {
+   "code": "38",
+   "en": "Initial starting attempt failed",
+   "ru": "Первая попытка запуска неудачная",
+   "advice": "В случае частого возникновения (>10 раз): 1) Причина в заборе воздуха или в магистрали отвода выхлопных газов. 2) Причина в топливной системе. 3) Проверьте насос­дозатор. 4) Проверьте электрическую систему штифта накала."
+  },
+  {
+   "code": "39",
+   "en": "Initial starting attempt failed – not restarting",
+   "ru": "Первая попытка запуска неудачная (нет повторного запуска)",
+   "advice": "В случае частого возникновения (>3 раз): 1) Причина в заборе воздуха или в магистрали отвода выхлопных газов. 2) Причина в топливной системе. 3) Проверьте насос­дозатор. 4) Проверьте электрическую систему штифта накала."
+  },
+  {
+   "code": "3a",
+   "en": "W-bus / LIN-bus shortcircuit to earth",
+   "ru": "Короткое замыкание в шине W-Bus / LIN-Bus",
+   "advice": "Неисправность в области коммутации шины W-Bus"
+  },
+  {
+   "code": "3b",
+   "en": "Fault 59",
+   "ru": "Ошибка 59",
+   "advice": ""
+  },
+  {
+   "code": "3c",
+   "en": "Internal control unit error 60",
+   "ru": "Внутренняя ошибка блока 60 управления",
+   "advice": "Стереть ошибку, снять блокировку на подогревателе повторно запустить подогреватель"
+  },
+  {
+   "code": "3d",
+   "en": "Internal control unit error 61",
+   "ru": "Внутренняя ошибка блока 61 управления",
+   "advice": "Стереть ошибку, снять блокировку на подогревателе повторно запустить подогреватель"
+  },
+  {
+   "code": "3e",
+   "en": "Internal control unit error 62",
+   "ru": "Внутренняя ошибка блока 62 управления",
+   "advice": "Стереть ошибку, снять блокировку на подогревателе повторно запустить подогреватель"
+  },
+  {
+   "code": "3f",
+   "en": "Wrong version dataset loaded",
+   "ru": "Загружена неправильное программное обеспечение",
+   "advice": "Стереть ошибку, снять блокировку на подогревателе повторно запустить подогреватель"
+  },
+  {
+   "code": "40",
+   "en": "Fault 64",
+   "ru": "Ошибка 64",
+   "advice": ""
+  },
+  {
+   "code": "41",
+   "en": "Fault 65",
+   "ru": "Ошибка 65",
+   "advice": ""
+  },
+  {
+   "code": "42",
+   "en": "Fault 66",
+   "ru": "Ошибка 66",
+   "advice": ""
+  },
+  {
+   "code": "43",
+   "en": "Fault 67",
+   "ru": "Ошибка 67",
+   "advice": ""
+  },
+  {
+   "code": "44",
+   "en": "Fault 68",
+   "ru": "Ошибка 68",
+   "advice": ""
+  },
+  {
+   "code": "45",
+   "en": "Short circuit / open circuit of heating relay",
+   "ru": "Ошибка блока реле (обрыв / замыкание реле нагревателя)",
+   "advice": ""
+  },
+  {
+   "code": "46",
+   "en": "Fault 70",
+   "ru": "Ошибка 70",
+   "advice": ""
+  },
+  {
+   "code": "47",
+   "en": "Fault 71",
+   "ru": "Ошибка 71",
+   "advice": ""
+  },
+  {
+   "code": "48",
+   "en": "Fault 72",
+   "ru": "Ошибка 72",
+   "advice": ""
+  },
+  {
+   "code": "49",
+   "en": "Fault 73",
+   "ru": "Ошибка 73",
+   "advice": ""
+  },
+  {
+   "code": "4a",
+   "en": "Fault 74",
+   "ru": "Ошибка 74",
+   "advice": ""
+  },
+  {
+   "code": "4b",
+   "en": "Fault 75",
+   "ru": "Ошибка 75",
+   "advice": ""
+  },
+  {
+   "code": "4c",
+   "en": "Overvoltage component protection",
+   "ru": "Высокое напряжение при защите компонентов",
+   "advice": "Проверьте энергоснабжение бортовой сети автомобиля."
+  },
+  {
+   "code": "4d",
+   "en": "Fault 77",
+   "ru": "Ошибка 77",
+   "advice": ""
+  },
+  {
+   "code": "4e",
+   "en": "Fault 78",
+   "ru": "Ошибка 78",
+   "advice": ""
+  },
+  {
+   "code": "4f",
+   "en": "Fault 79",
+   "ru": "Ошибка 79",
+   "advice": ""
+  },
+  {
+   "code": "50",
+   "en": "User interface idle-Mode (no-communication)",
+   "ru": "Пульт управления не имеет связи",
+   "advice": ""
+  },
+  {
+   "code": "51",
+   "en": "User interface has communication fault",
+   "ru": "Пульт управления имеет ошибку связи",
+   "advice": ""
+  },
+  {
+   "code": "52",
+   "en": "User interface send no defined operating mode",
+   "ru": "Пульт управления посылает не определенный режим работы",
+   "advice": ""
+  },
+  {
+   "code": "53",
+   "en": "Heater fan status message negative",
+   "ru": "Вентилятор нагревателя - негативное сообщение",
+   "advice": ""
+  },
+  {
+   "code": "54",
+   "en": "Heater fan status bus has short circuit to UB",
+   "ru": "Вентилятор нагревателя - замыкание на массу",
+   "advice": ""
+  },
+  {
+   "code": "55",
+   "en": "Temperature water sensor failure",
+   "ru": "Датчик температуры ОЖ - неисправен",
+   "advice": ""
+  },
+  {
+   "code": "56",
+   "en": "Temperature water sensor short circuit to UB",
+   "ru": "Датчик температуры ОЖ - замыкание на массу",
+   "advice": ""
+  },
+  {
+   "code": "57",
+   "en": "Overheating water temperature sensor",
+   "ru": "Датчик температуры ОЖ - перегрев",
+   "advice": ""
+  },
+  {
+   "code": "58",
+   "en": "Overstepping water temperature sensor gradient",
+   "ru": "Датчик температуры ОЖ - неверный градиент",
+   "advice": ""
+  },
+  {
+   "code": "59",
+   "en": "Overheating blow temperature sensor",
+   "ru": "Датчик температуры вентилятора - перегрев",
+   "advice": ""
+  },
+  {
+   "code": "5a",
+   "en": "Overstepping low temperature sensor gradient",
+   "ru": "Датчик температуры - низкий градиент",
+   "advice": ""
+  },
+  {
+   "code": "5b",
+   "en": "Overheating PCB temperature sensor",
+   "ru": "Датчик температуры печатной платы - перегрев",
+   "advice": ""
+  },
+  {
+   "code": "5c",
+   "en": "Overstepping PCB temp sensor gradient",
+   "ru": "Датчик температуры печатной платы - неверный градиент",
+   "advice": ""
+  },
+  {
+   "code": "5d",
+   "en": "Cabin temperature sensor failure",
+   "ru": "Неисправность датчика температуры салона",
+   "advice": ""
+  },
+  {
+   "code": "5e",
+   "en": "Flame detector gradient failure",
+   "ru": "Неправильный градиент датчика пламени",
+   "advice": ""
+  },
+  {
+   "code": "5f",
+   "en": "Emergency cooling",
+   "ru": "Аварийное охлаждение",
+   "advice": ""
+  },
+  {
+   "code": "60",
+   "en": "Customer specific fault 1",
+   "ru": "Ошибка заказчика 1",
+   "advice": ""
+  },
+  {
+   "code": "61",
+   "en": "Customer specific fault 2",
+   "ru": "Ошибка заказчика 2",
+   "advice": ""
+  },
+  {
+   "code": "62",
+   "en": "Customer specific fault 3",
+   "ru": "Переполнение значение таймера DP_max",
+   "advice": "В случае частого возникновения (>3 раз): 1) Причина в заборе воздуха или в магистрали отвода выхлопных газов. 2) Причина в топливной системе. 3) Проверьте насос­дозатор. 4) Проверьте электрическую систему штифта накала."
+  },
+  {
+   "code": "63",
+   "en": "Customer specific fault 4",
+   "ru": "Ошибка заказчика 4",
+   "advice": ""
+  },
+  {
+   "code": "64",
+   "en": "Customer specific fault 5",
+   "ru": "Ошибка заказчика 5",
+   "advice": ""
+  },
+  {
+   "code": "65",
+   "en": "Customer specific fault 6",
+   "ru": "Ошибка заказчика 6",
+   "advice": ""
+  },
+  {
+   "code": "66",
+   "en": "Customer specific fault 7",
+   "ru": "Ошибка заказчика 7",
+   "advice": ""
+  },
+  {
+   "code": "67",
+   "en": "Customer specific fault 8",
+   "ru": "Ошибка заказчика 8",
+   "advice": ""
+  },
+  {
+   "code": "68",
+   "en": "Customer specific fault 9",
+   "ru": "Ошибка заказчика 9",
+   "advice": ""
+  },
+  {
+   "code": "69",
+   "en": "Customer specific fault 10",
+   "ru": "Ошибка заказчика 10",
+   "advice": ""
+  },
+  {
+   "code": "6a",
+   "en": "Customer specific fault 11",
+   "ru": "Ошибка заказчика 11",
+   "advice": ""
+  },
+  {
+   "code": "6b",
+   "en": "Customer specific fault 12",
+   "ru": "Ошибка заказчика 12",
+   "advice": ""
+  },
+  {
+   "code": "6c",
+   "en": "Customer specific fault 13",
+   "ru": "Ошибка заказчика 13",
+   "advice": ""
+  },
+  {
+   "code": "6d",
+   "en": "Customer specific fault 14",
+   "ru": "Ошибка заказчика 14",
+   "advice": ""
+  },
+  {
+   "code": "6e",
+   "en": "Customer specific fault 15",
+   "ru": "Ошибка заказчика 15",
+   "advice": ""
+  },
+  {
+   "code": "6f",
+   "en": "Customer specific fault 16",
+   "ru": "Ошибка заказчика 16",
+   "advice": ""
+  },
+  {
+   "code": "70",
+   "en": "Customer specific fault 17",
+   "ru": "Ошибка заказчика 17",
+   "advice": ""
+  },
+  {
+   "code": "71",
+   "en": "Customer specific fault 18",
+   "ru": "Ошибка заказчика 18",
+   "advice": ""
+  },
+  {
+   "code": "72",
+   "en": "Customer specific fault 19",
+   "ru": "Ошибка заказчика 19",
+   "advice": ""
+  },
+  {
+   "code": "73",
+   "en": "Customer specific fault 20",
+   "ru": "Ошибка заказчика 20",
+   "advice": ""
+  },
+  {
+   "code": "74",
+   "en": "Customer specific fault 21",
+   "ru": "Ошибка заказчика 21",
+   "advice": ""
+  },
+  {
+   "code": "75",
+   "en": "Customer specific fault 22",
+   "ru": "Ошибка заказчика 22",
+   "advice": ""
+  },
+  {
+   "code": "76",
+   "en": "Customer specific fault 23",
+   "ru": "Ошибка заказчика 23",
+   "advice": ""
+  },
+  {
+   "code": "77",
+   "en": "Customer specific fault 24",
+   "ru": "Ошибка заказчика 24",
+   "advice": ""
+  },
+  {
+   "code": "78",
+   "en": "Customer specific fault 25",
+   "ru": "Ошибка заказчика 25",
+   "advice": ""
+  },
+  {
+   "code": "79",
+   "en": "Customer specific fault 26",
+   "ru": "Ошибка заказчика 26",
+   "advice": ""
+  },
+  {
+   "code": "7a",
+   "en": "Customer specific fault 27",
+   "ru": "Ошибка заказчика 27",
+   "advice": ""
+  },
+  {
+   "code": "7b",
+   "en": "Customer specific fault 28",
+   "ru": "Ошибка заказчика 28",
+   "advice": ""
+  },
+  {
+   "code": "7c",
+   "en": "Customer specific fault 29",
+   "ru": "Ошибка заказчика 29",
+   "advice": ""
+  },
+  {
+   "code": "7d",
+   "en": "Customer specific fault 30",
+   "ru": "Ошибка заказчика 30",
+   "advice": ""
+  },
+  {
+   "code": "7e",
+   "en": "Customer specific fault 31",
+   "ru": "Ошибка заказчика 31",
+   "advice": ""
+  },
+  {
+   "code": "7f",
+   "en": "Customer specific fault 32",
+   "ru": "Ошибка заказчика 32",
+   "advice": ""
+  },
+  {
+   "code": "80",
+   "en": "Fault 128",
+   "ru": "Ошибка 128",
+   "advice": ""
+  },
+  {
+   "code": "81",
+   "en": "EOL checksum error",
+   "ru": "Ошибка контрольной суммы EOL",
+   "advice": "Стереть ошибку, снять блокировку на подогревателе повторно запустить подогреватель"
+  },
+  {
+   "code": "82",
+   "en": "No start during test-run",
+   "ru": "Не запускается во время тестового запуска",
+   "advice": "Данная ошибка может появляться только при первом вводе подогревателя в эксплуатацию (у производителя а/м): 1) Причина в заборе воздуха или в магистрали отвода выхлопных газов. 2) Причина в топливной системе. 3) Проверьте насос­дозатор. 4) Проверьте электрическую систему штифта накала"
+  },
+  {
+   "code": "83",
+   "en": "Flame failure",
+   "ru": "Плохое пламя (Во время цикла прогрева пламя гасло больше число раз (FAZ), чем запрограммировано в EEPROM)",
+   "advice": "В случае частого возникновения (>3 раз): 1) Причина в заборе воздуха или в магистрали отвода выхлопных газов. 2) Причина в топливной системе. 3) Проверьте насос­дозатор. 4) Проверьте электрическую систему штифта накала."
+  },
+  {
+   "code": "84",
+   "en": "Operating voltage too low",
+   "ru": "Напряжение питания слишком низкое",
+   "advice": "1) Проверьте простой формулой: время прогрева длиннее времени поездки? 2) Проверьте энергоснабжение бортовой сети автомобиля"
+  },
+  {
+   "code": "85",
+   "en": "Flame was detected after combustion",
+   "ru": "Обнаружение пламени после сгорания",
+   "advice": ""
+  },
+  {
+   "code": "86",
+   "en": "Fault 134",
+   "ru": "Ошибка 134",
+   "advice": ""
+  },
+  {
+   "code": "87",
+   "en": "Heater lock-out permanent",
+   "ru": "Постоянная блокировка отопителя",
+   "advice": "1) Снять блокировку, попытаться повторно запустить подогреватель. 2) Считать дальнейшие сообщения обошибках и следовать рекомендациям"
+  },
+  {
+   "code": "88",
+   "en": "Fuel pump failure",
+   "ru": "Дозирующий (топливный) насос – обрыв (или цепь замыкается на +)",
+   "advice": "Проверьте электрическую систему топливоподачи"
+  },
+  {
+   "code": "89",
+   "en": "Combustion air fan interruption",
+   "ru": "Вентилятор камеры сгорания – обрыв (или цепь замыкается на +)",
+   "advice": "Проверьте электрическую систему нагнетателя"
+  },
+  {
+   "code": "8a",
+   "en": "Glow plug / flame monitor interruption",
+   "ru": "Штифт накаливания/датчик пламени - обрыв",
+   "advice": ""
+  },
+  {
+   "code": "8b",
+   "en": "Circulation pump interruption",
+   "ru": "Циркуляционный (водяной) насос – обрыв (или цепь замыкается на +)",
+   "advice": "Проверьте электрическую систему контура ОЖ"
+  },
+  {
+   "code": "8c",
+   "en": "Fault 140",
+   "ru": "Ошибка 140",
+   "advice": ""
+  },
+  {
+   "code": "8d",
+   "en": "Green LED interruption",
+   "ru": "Зеленый светодиод - обрыв",
+   "advice": ""
+  },
+  {
+   "code": "8e",
+   "en": "Yellow LED interruption",
+   "ru": "Желтый светодиод - обрыв",
+   "advice": ""
+  },
+  {
+   "code": "8f",
+   "en": "Fault 143",
+   "ru": "Ошибка 143",
+   "advice": ""
+  },
+  {
+   "code": "90",
+   "en": "Solenoid valve interruption",
+   "ru": "Электромагнитный клапан – обрыв (или цепь замыкается на +)",
+   "advice": "Проверьте электрическую систему клапана переключения ОЖ"
+  },
+  {
+   "code": "91",
+   "en": "Control unit locked or coded as neutral",
+   "ru": "Блок управления азаблокирован или закодирован как нейтральный",
+   "advice": ""
+  },
+  {
+   "code": "92",
+   "en": "Command refresh failure",
+   "ru": "Ошибка обновления команды (Ошибка в обработке команд. При возникновении нет функционирования , или отключение по ошибке)",
+   "advice": "Неисправность в области коммутации шины W-Bus"
+  },
+  {
+   "code": "93",
+   "en": "Fault 147",
+   "ru": "Ошибка 147",
+   "advice": ""
+  },
+  {
+   "code": "94",
+   "en": "Temperature sensor interruption",
+   "ru": "Датчик температуры – обрыв (или цепь замыкается на +)",
+   "advice": "Проверьте электрическую систему температурных датчиков."
+  },
+  {
+   "code": "95",
+   "en": "Combustion air fan tight",
+   "ru": "Вентилятор камеры сгорания - трудное проворачивание",
+   "advice": ""
+  },
+  {
+   "code": "96",
+   "en": "Fault 150",
+   "ru": "Ошибка 150",
+   "advice": ""
+  },
+  {
+   "code": "97",
+   "en": "Overheat sensor position wrong",
+   "ru": "Датчик перегрева - неверное значение",
+   "advice": ""
+  },
+  {
+   "code": "98",
+   "en": "Fault 152 (Power supply interruption)",
+   "ru": "Прерывание электропитания",
+   "advice": ""
+  },
+  {
+   "code": "99",
+   "en": "Glow plug / electronic ignition unit interruption",
+   "ru": "Штифт накаливания / электронный поджиг – обрыв (или цепь замыкается на +)",
+   "advice": "Проверьте электрическую систему штифта накала"
+  },
+  {
+   "code": "9a",
+   "en": "Flame sensor interruption",
+   "ru": "Датчик пламени - обрыв",
+   "advice": ""
+  },
+  {
+   "code": "9b",
+   "en": "Setpoint transmitter invalid",
+   "ru": "Ошибка передатчика Setpoint",
+   "advice": ""
+  },
+  {
+   "code": "9c",
+   "en": "Intelligent undervoltage detection",
+   "ru": "Интеллектуальное обнаружение низкого напряжения",
+   "advice": "1) Проверьте простой формулой: время прогрева длиннее времени поездки? 2) Проверьте энергоснабжение бортовой сети автомобиля."
+  },
+  {
+   "code": "9d",
+   "en": "Solenoid valve shed test interruption",
+   "ru": "Электромагнитный клапан - во времяиспытания обнаружен обрыв",
+   "advice": ""
+  },
+  {
+   "code": "9e",
+   "en": "Fuel sensor interruption",
+   "ru": "Датчик топлива - прерывание",
+   "advice": ""
+  },
+  {
+   "code": "9f",
+   "en": "Nozzle stock heating interruption",
+   "ru": "Подогреватель топливной форсунки - обрыв",
+   "advice": ""
+  },
+  {
+   "code": "a0",
+   "en": "Operating indicator interruption",
+   "ru": "Индикатор работы - прерывание",
+   "advice": ""
+  },
+  {
+   "code": "a1",
+   "en": "Flame indicator interruption",
+   "ru": "Индикатор пламени - прерывание",
+   "advice": ""
+  },
+  {
+   "code": "a2",
+   "en": "Fault 162",
+   "ru": "Ошибка 162",
+   "advice": ""
+  },
+  {
+   "code": "a3",
+   "en": "Fault 163",
+   "ru": "Ошибка 163",
+   "advice": ""
+  },
+  {
+   "code": "a4",
+   "en": "Fault 164",
+   "ru": "Ошибка 164",
+   "advice": ""
+  },
+  {
+   "code": "a5",
+   "en": "Fuel pre heating interruption",
+   "ru": "Предварительный подогрев топлива - прерывания",
+   "advice": ""
+  },
+  {
+   "code": "a6",
+   "en": "PCB temperature sensor interruption",
+   "ru": "Датчик температуры блока управления - прерывание",
+   "advice": ""
+  },
+  {
+   "code": "a7",
+   "en": "Fault 167",
+   "ru": "Ошибка 167",
+   "advice": ""
+  },
+  {
+   "code": "a8",
+   "en": "Communication board net energy manager error",
+   "ru": "Распределитель бортовой энергии - ошибка",
+   "advice": ""
+  },
+  {
+   "code": "a9",
+   "en": "Fault 169",
+   "ru": "Ошибка 169",
+   "advice": ""
+  },
+  {
+   "code": "aa",
+   "en": "Send on W-Bus not succeed",
+   "ru": "Отправка данных по W-Bus - не выполнена (даже после 4-хкратного повтора, нет ответа или ответ с помехами)",
+   "advice": "Неисправность в области коммутации шины W-Bus"
+  },
+  {
+   "code": "ab",
+   "en": "Overheat sensor interruption",
+   "ru": "Датчик перегрева – обрыв (или цепь замыкается на +)",
+   "advice": "Проверьте электрическую систему температурных датчиков."
+  },
+  {
+   "code": "ac",
+   "en": "The pressure sensor failure",
+   "ru": "Датчик давления - ошибка",
+   "advice": ""
+  },
+  {
+   "code": "ad",
+   "en": "Fault 173",
+   "ru": "Ошибка 173",
+   "advice": ""
+  },
+  {
+   "code": "ae",
+   "en": "Fault 174",
+   "ru": "Ошибка 174",
+   "advice": ""
+  },
+  {
+   "code": "af",
+   "en": "Fault 175",
+   "ru": "Ошибка 175",
+   "advice": ""
+  },
+  {
+   "code": "b0",
+   "en": "Fault 176",
+   "ru": "Ошибка 176",
+   "advice": ""
+  },
+  {
+   "code": "b1",
+   "en": "Fault 177",
+   "ru": "Ошибка 177",
+   "advice": ""
+  },
+  {
+   "code": "b2",
+   "en": "Fault 178",
+   "ru": "Ошибка 178",
+   "advice": ""
+  },
+  {
+   "code": "b3",
+   "en": "Fault 179",
+   "ru": "Ошибка 179",
+   "advice": ""
+  },
+  {
+   "code": "b4",
+   "en": "Fault 180",
+   "ru": "Ошибка 180",
+   "advice": ""
+  },
+  {
+   "code": "b5",
+   "en": "Fault 181",
+   "ru": "Ошибка 181",
+   "advice": ""
+  },
+  {
+   "code": "b6",
+   "en": "Thermal fuse interrupted",
+   "ru": "Плавкий предохранитель прерван",
+   "advice": ""
+  },
+  {
+   "code": "b7",
+   "en": "Fault 183",
+   "ru": "Ошибка 183",
+   "advice": ""
+  },
+  {
+   "code": "b8",
+   "en": "Fault 184",
+   "ru": "Ошибка 184",
+   "advice": ""
+  },
+  {
+   "code": "b9",
+   "en": "Fault 185",
+   "ru": "Ошибка 185",
+   "advice": ""
+  },
+  {
+   "code": "ba",
+   "en": "Fault 186",
+   "ru": "Ошибка 186",
+   "advice": ""
+  },
+  {
+   "code": "bb",
+   "en": "Fault 187",
+   "ru": "Ошибка 187",
+   "advice": ""
+  },
+  {
+   "code": "bc",
+   "en": "Fault 188",
+   "ru": "Ошибка 188",
+   "advice": ""
+  },
+  {
+   "code": "bd",
+   "en": "Fault 189",
+   "ru": "Ошибка 189",
+   "advice": ""
+  },
+  {
+   "code": "be",
+   "en": "Fault 190",
+   "ru": "Ошибка 190",
+   "advice": ""
+  },
+  {
+   "code": "bf",
+   "en": "Fault 191",
+   "ru": "Ошибка 191",
+   "advice": ""
+  },
+  {
+   "code": "c0",
+   "en": "Fault 192",
+   "ru": "Ошибка 192",
+   "advice": ""
+  },
+  {
+   "code": "c1",
+   "en": "Fault 193",
+   "ru": "Ошибка 193",
+   "advice": ""
+  },
+  {
+   "code": "c2",
+   "en": "Fault 194",
+   "ru": "Ошибка 194",
+   "advice": ""
+  },
+  {
+   "code": "c3",
+   "en": "Fault 195",
+   "ru": "Ошибка 195",
+   "advice": ""
+  },
+  {
+   "code": "c4",
+   "en": "Fault 196",
+   "ru": "Ошибка 196",
+   "advice": ""
+  },
+  {
+   "code": "c5",
+   "en": "Fault 197",
+   "ru": "Ошибка 197",
+   "advice": ""
+  },
+  {
+   "code": "c6",
+   "en": "Fault 198",
+   "ru": "Ошибка 198",
+   "advice": ""
+  },
+  {
+   "code": "c7",
+   "en": "Fault 199",
+   "ru": "Ошибка 199",
+   "advice": ""
+  },
+  {
+   "code": "c8",
+   "en": "Fault 200",
+   "ru": "Ошибка 200",
+   "advice": ""
+  },
+  {
+   "code": "c9",
+   "en": "Fault 201",
+   "ru": "Ошибка 201",
+   "advice": ""
+  },
+  {
+   "code": "ca",
+   "en": "Fault 202",
+   "ru": "Ошибка 202",
+   "advice": ""
+  },
+  {
+   "code": "cb",
+   "en": "Fault 203",
+   "ru": "Ошибка 203",
+   "advice": ""
+  },
+  {
+   "code": "cc",
+   "en": "Fault 204",
+   "ru": "Ошибка 204",
+   "advice": ""
+  },
+  {
+   "code": "cd",
+   "en": "Fault 205",
+   "ru": "Ошибка 205",
+   "advice": ""
+  },
+  {
+   "code": "ce",
+   "en": "Fault 206",
+   "ru": "Ошибка 206",
+   "advice": ""
+  },
+  {
+   "code": "cf",
+   "en": "Fault 207",
+   "ru": "Ошибка 207",
+   "advice": ""
+  },
+  {
+   "code": "d0",
+   "en": "Fault 208",
+   "ru": "Ошибка 208",
+   "advice": ""
+  },
+  {
+   "code": "e0",
+   "en": "Customer specific fault 33",
+   "ru": "Ошибка заказчика 33",
+   "advice": ""
+  },
+  {
+   "code": "e1",
+   "en": "Customer specific fault 34",
+   "ru": "Ошибка заказчика 34",
+   "advice": ""
+  },
+  {
+   "code": "e2",
+   "en": "Customer specific fault 35",
+   "ru": "Ошибка заказчика 35",
+   "advice": ""
+  },
+  {
+   "code": "e3",
+   "en": "Customer specific fault 36",
+   "ru": "Ошибка заказчика 36",
+   "advice": ""
+  },
+  {
+   "code": "e4",
+   "en": "Customer specific fault 37",
+   "ru": "Ошибка заказчика 37",
+   "advice": ""
+  },
+  {
+   "code": "e5",
+   "en": "Customer specific fault 38",
+   "ru": "Ошибка заказчика 38",
+   "advice": ""
+  },
+  {
+   "code": "e6",
+   "en": "Customer specific fault 39",
+   "ru": "Ошибка заказчика 39",
+   "advice": ""
+  },
+  {
+   "code": "e7",
+   "en": "Customer specific fault 40",
+   "ru": "Ошибка заказчика 40",
+   "advice": ""
+  },
+  {
+   "code": "e8",
+   "en": "Customer specific fault 41",
+   "ru": "Ошибка заказчика 41",
+   "advice": ""
+  },
+  {
+   "code": "e9",
+   "en": "Customer specific fault 42",
+   "ru": "Ошибка заказчика 42",
+   "advice": ""
+  },
+  {
+   "code": "ea",
+   "en": "Customer specific fault 43",
+   "ru": "Ошибка заказчика 43",
+   "advice": ""
+  },
+  {
+   "code": "eb",
+   "en": "Customer specific fault 44",
+   "ru": "Ошибка заказчика 44",
+   "advice": ""
+  },
+  {
+   "code": "ec",
+   "en": "Customer specific fault 45",
+   "ru": "Ошибка заказчика 45",
+   "advice": ""
+  },
+  {
+   "code": "ed",
+   "en": "Customer specific fault 46",
+   "ru": "Ошибка заказчика 46",
+   "advice": ""
+  },
+  {
+   "code": "ee",
+   "en": "Customer specific fault 47",
+   "ru": "Ошибка заказчика 47",
+   "advice": ""
+  },
+  {
+   "code": "ef",
+   "en": "Customer specific fault 48",
+   "ru": "Ошибка заказчика 48",
+   "advice": ""
+  },
+  {
+   "code": "f0",
+   "en": "Customer specific fault 49",
+   "ru": "Ошибка заказчика 49",
+   "advice": ""
+  },
+  {
+   "code": "f1",
+   "en": "Customer specific fault 50",
+   "ru": "Ошибка заказчика 50",
+   "advice": ""
+  },
+  {
+   "code": "f2",
+   "en": "Customer specific fault 51",
+   "ru": "Ошибка заказчика 51",
+   "advice": ""
+  },
+  {
+   "code": "f3",
+   "en": "Customer specific fault 52",
+   "ru": "Ошибка заказчика 52",
+   "advice": ""
+  },
+  {
+   "code": "f4",
+   "en": "Customer specific fault 53",
+   "ru": "Ошибка заказчика 53",
+   "advice": ""
+  },
+  {
+   "code": "f5",
+   "en": "Customer specific fault 54",
+   "ru": "Ошибка заказчика 54",
+   "advice": ""
+  },
+  {
+   "code": "f6",
+   "en": "Customer specific fault 55",
+   "ru": "Ошибка заказчика 55",
+   "advice": ""
+  },
+  {
+   "code": "f7",
+   "en": "Customer specific fault 56",
+   "ru": "Ошибка заказчика 56",
+   "advice": ""
+  },
+  {
+   "code": "f8",
+   "en": "Customer specific fault 57",
+   "ru": "Ошибка заказчика 57",
+   "advice": ""
+  },
+  {
+   "code": "f9",
+   "en": "Customer specific fault 58",
+   "ru": "Ошибка заказчика 58",
+   "advice": ""
+  },
+  {
+   "code": "fa",
+   "en": "Customer specific fault 59",
+   "ru": "Ошибка заказчика 59",
+   "advice": ""
+  },
+  {
+   "code": "fb",
+   "en": "Customer specific fault 60",
+   "ru": "Ошибка заказчика 60",
+   "advice": ""
+  },
+  {
+   "code": "fc",
+   "en": "Customer specific fault 61",
+   "ru": "Ошибка заказчика 61",
+   "advice": ""
+  },
+  {
+   "code": "fd",
+   "en": "Customer specific fault 62",
+   "ru": "Ошибка заказчика 62",
+   "advice": ""
+  },
+  {
+   "code": "fe",
+   "en": "Customer specific fault 63",
+   "ru": "Ошибка заказчика 63",
+   "advice": ""
+  },
+  {
+   "code": "ff",
+   "en": "Unknown error code",
+   "ru": "Неизвестная ошибка",
+   "advice": "В ТТС существует 3 ячейки для хранения ошибок, при ответе FF - ошибки отсутствуют."
+  }
+ ]
+}

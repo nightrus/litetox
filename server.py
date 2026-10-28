@@ -44,7 +44,7 @@ DB = dict(
     database=os.environ.get("DB_NAME", "litetox"),
 )
 
-VERSION = "2.1.1"
+VERSION = "2.2.0"
 
 
 # ---------------------------------------------------------------- logging
@@ -148,7 +148,17 @@ SCHEMA = [
         frame TEXT NOT NULL,
         INDEX ix_raw (ts), INDEX ix_raw_imei (imei, ts)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4""",
+    # Webasto W-Bus fault codes, filled from webasto_codes.json on start
+    """CREATE TABLE IF NOT EXISTS webasto_codes (
+        code SMALLINT UNSIGNED PRIMARY KEY,
+        hex CHAR(2) NOT NULL,
+        name_en VARCHAR(255) NOT NULL,
+        name_ru VARCHAR(512) NOT NULL,
+        advice TEXT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4""",
 ]
+CODES_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "webasto_codes.json")
+WEBASTO_CODES: dict[int, dict] = {}
 
 
 class Db:
@@ -594,9 +604,19 @@ def parse_diag(text):
     return None if not code or code.lower() in ("none", "no", "0") else code
 
 
+def describe_code(code):
+    """Look a module error code up in the Webasto table. Codes are hex as in Thermo Test
+    ('84', '0x84', '84h'); the module's exact format for a real fault is not seen yet."""
+    m = re.match(r"^(?:0x)?([0-9a-f]{1,2})h?\b", (code or "").strip(), re.I)
+    return WEBASTO_CODES.get(int(m.group(1), 16)) if m else None
+
+
 async def on_diag(d, text):
     st = d.state
     st["webasto_error"] = parse_diag(text)
+    info = describe_code(st["webasto_error"]) if st["webasto_error"] else None
+    st["webasto_error_text"] = info["ru"] if info else None
+    st["webasto_error_advice"] = (info["advice"] or None) if info else None
     st["webasto_diag_raw"] = text.replace("\n", " | ")
     st["webasto_diag_ts"] = iso(utcnow())
     d.dirty = True
@@ -941,6 +961,28 @@ async def migrate_legacy():
     log("migrated legacy state.json ->", DEFAULT_IMEI)
 
 
+async def load_codes():
+    """Upsert the bundled Webasto fault table into webasto_codes and keep it in memory."""
+    try:
+        with open(CODES_FILE, encoding="utf-8") as f:
+            codes = json.load(f)["codes"]
+    except (OSError, ValueError, KeyError) as e:
+        log("webasto codes not loaded:", repr(e))
+        return
+    for c in codes:
+        n = int(c["code"], 16)
+        WEBASTO_CODES[n] = c
+        await db.q("INSERT INTO webasto_codes (code, hex, name_en, name_ru, advice) VALUES (%s,%s,%s,%s,%s) "
+                   "ON DUPLICATE KEY UPDATE hex=VALUES(hex), name_en=VALUES(name_en), "
+                   "name_ru=VALUES(name_ru), advice=VALUES(advice)",
+                   (n, c["code"], c["en"], c["ru"], c["advice"] or None))
+    log("webasto codes:", len(WEBASTO_CODES))
+
+
+async def h_codes(request):
+    return web.json_response({"codes": [WEBASTO_CODES[k] for k in sorted(WEBASTO_CODES)]})
+
+
 async def wait_db():
     for i in range(60):
         try:
@@ -955,6 +997,7 @@ async def wait_db():
 
 async def main():
     await wait_db()
+    await load_codes()
     await migrate_legacy()
     await load_devices()
     log("devices:", ", ".join(DEVICES) or "none")
@@ -969,6 +1012,7 @@ async def main():
         web.post("/cmd/{imei}", h_cmd),
         web.get("/cmd/{imei}/{id:\\d+}", h_command),
         web.get("/history/{imei}", h_history),
+        web.get("/webasto-codes", h_codes),
         web.get("/state", h_state),       # legacy
         web.post("/cmd", h_cmd),          # legacy
     ])

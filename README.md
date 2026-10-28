@@ -78,6 +78,7 @@ ALTOX-сервер модулю указывать не нужно: на нег�
 | POST | `/cmd/{imei}` | `{"command": "STATUS"}` → id команды (префикс `cmd_` добавляется сам; 409, если модуль не на связи) |
 | GET | `/cmd/{imei}/{id}` | статус команды и ответ модуля |
 | GET | `/history/{imei}?type=positions\|heater\|balance\|commands` | история (`limit`, `since`) |
+| GET | `/webasto-codes` | таблица кодов ошибок Webasto |
 
 Пример:
 
@@ -86,7 +87,10 @@ curl -H "Authorization: Bearer $API_TOKEN" -X POST https://litetox.example.com/c
      -d '{"command": "START:30"}'
 ```
 
-Команды модуля описаны в инструкции ALTOX: `STATUS`, `START`, `START:30`, `STOP`, `ussd`, `gsminfo`, `READ`, `ACTIVATE`/`DEACTIVATE` и др. Между `ussd` и следующей командой прокси сам выдерживает паузу: активная USSD-сессия модуля «съедает» следующую команду.
+Команды модуля описаны в инструкции ALTOX: `STATUS`, `START`, `START:30`, `STOP`, `ussd`, `gsminfo`, `READ`, `erase`, `ACTIVATE`/`DEACTIVATE` и др. Между `ussd` и следующей командой прокси сам выдерживает паузу: активная USSD-сессия модуля «съедает» следующую команду.
+
+### Коды ошибок Webasto
+Файл `webasto_codes.json` содержит 240 кодов ошибок W-Bus (hex, описание на английском и русском, рекомендации) по таблице [altox.ru/docs/webasto-code](https://altox.ru/docs/webasto-code). При старте прокси заливает их в таблицу `webasto_codes`. Если ответ на `READ` содержит код ошибки, в `/state` появляются `webasto_error_text` (расшифровка) и `webasto_error_advice` (что проверить).
 
 ## Лицензия
 
