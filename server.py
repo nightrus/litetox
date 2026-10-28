@@ -16,7 +16,7 @@ import os
 import re
 import threading
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 import pymysql
 from aiohttp import web
@@ -44,7 +44,7 @@ DB = dict(
     database=os.environ.get("DB_NAME", "litetox"),
 )
 
-VERSION = "2.2.1"
+VERSION = "2.2.2"
 
 
 # ---------------------------------------------------------------- logging
@@ -251,11 +251,20 @@ def parse_params(s):
     return out
 
 
+GPS_ROLLOVER = timedelta(weeks=1024)
+
+
 def parse_dt(d, t):
     try:
-        return datetime.strptime(d + t, "%d%m%y%H%M%S").replace(tzinfo=timezone.utc)
+        ts = datetime.strptime(d + t, "%d%m%y%H%M%S").replace(tzinfo=timezone.utc)
     except Exception:
         return None
+    # GPS week-number rollover: old receivers report dates 1024 weeks (~19.6 y) back
+    # (the module sends 2007-03-14 for 2026-10-28)
+    now = datetime.now(timezone.utc)
+    while ts < now - timedelta(days=30) and ts + GPS_ROLLOVER < now + timedelta(days=1):
+        ts += GPS_ROLLOVER
+    return ts
 
 
 def parse_record(rec):
