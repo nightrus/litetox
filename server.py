@@ -44,7 +44,7 @@ DB = dict(
     database=os.environ.get("DB_NAME", "litetox"),
 )
 
-VERSION = "2.2.2"
+VERSION = "2.2.3"
 
 
 # ---------------------------------------------------------------- logging
@@ -531,7 +531,11 @@ async def on_record(d, rec, source):
         st["out2"] = r["params"]["do2"]
     st["moving"] = bool(r.get("speed")) and r["speed"] > 2
     st["position_ts"] = iso(r["ts"] or now)
-    st["tracking"] = True  # position records only flow with TRACKING1
+    # position records only flow with TRACKING1, but one may still be in flight right
+    # after TRACKING0 — trust the last command for a few minutes
+    sw = st.get("tracking_ts")
+    if not sw or (now - datetime.fromisoformat(sw)).total_seconds() > 180:
+        st["tracking"] = True
     d.dirty = True
     await db_safe(db.q(
         "INSERT INTO positions (imei, ts, received_at, source, lat, lon, speed, course, altitude, satellites,"
