@@ -87,7 +87,7 @@ curl -H "Authorization: Bearer $API_TOKEN" -X POST https://litetox.example.com/c
      -d '{"command": "START:30"}'
 ```
 
-Команды модуля описаны в инструкции ALTOX: `STATUS`, `START`, `START:30`, `STOP`, `ussd`, `gsminfo`, `READ`, `erase`, `ACTIVATE`/`DEACTIVATE` и др. Между `ussd` и следующей командой прокси сам выдерживает паузу: активная USSD-сессия модуля «съедает» следующую команду.
+Команды модуля описаны в инструкции ALTOX: `STATUS`, `START`, `START:30`, `STOP`, `ussd`, `gsminfo`, `READ`, `erase`, `TRACKING1`/`TRACKING0`, `ACTIVATE`/`DEACTIVATE` и др. Модуль не сообщает режим трекинга, поэтому прокси запоминает последнюю отправленную `TRACKING0/1` (поле `tracking` в `/state`), а пришедшие координаты считает признаком включённого трекинга. Между `ussd` и следующей командой прокси сам выдерживает паузу: активная USSD-сессия модуля «съедает» следующую команду.
 
 ### Коды ошибок Webasto
 Файл `webasto_codes.json` содержит 240 кодов ошибок W-Bus (hex, описание на английском и русском, рекомендации) по таблице [altox.ru/docs/webasto-code](https://altox.ru/docs/webasto-code). При старте прокси заливает их в таблицу `webasto_codes`. Если ответ на `READ` содержит код ошибки, в `/state` появляются `webasto_error_text` (расшифровка) и `webasto_error_advice` (что проверить).

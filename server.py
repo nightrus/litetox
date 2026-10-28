@@ -44,7 +44,7 @@ DB = dict(
     database=os.environ.get("DB_NAME", "litetox"),
 )
 
-VERSION = "2.2.0"
+VERSION = "2.2.1"
 
 
 # ---------------------------------------------------------------- logging
@@ -522,6 +522,7 @@ async def on_record(d, rec, source):
         st["out2"] = r["params"]["do2"]
     st["moving"] = bool(r.get("speed")) and r["speed"] > 2
     st["position_ts"] = iso(r["ts"] or now)
+    st["tracking"] = True  # position records only flow with TRACKING1
     d.dirty = True
     await db_safe(db.q(
         "INSERT INTO positions (imei, ts, received_at, source, lat, lon, speed, course, altitude, satellites,"
@@ -542,9 +543,12 @@ async def on_heater(d, text):
         st["heater_temp"] = h["heater_temp"]
     if h["output_on"] is not None:
         st["heater_output"] = h["output_on"]
-    for k in ("cabin_temp", "voltage", "gsm", "satellites", "hdop"):
+    # with TRACKING0 the status is the only source of satellites and speed
+    for k in ("cabin_temp", "voltage", "gsm", "satellites", "hdop", "speed"):
         if h[k] is not None:
             st[k] = h[k]
+    if h["speed"] is not None:
+        st["moving"] = h["speed"] > 2
     d.dirty = True
     await db_safe(db.q(
         "INSERT INTO heater_status (imei, received_at, heater_on, minutes_left, heater_temp, cabin_temp, flame,"
@@ -664,6 +668,11 @@ async def command_worker(d):
             await d.writer.drain()
             await raw(d.imei, ">", d.peer, cmd)
             await db_safe(db.q("UPDATE commands SET status='sent', sent_at=%s WHERE id=%s", (utcnow(), cid)))
+            # the module doesn't report its tracking mode, remember the last switch
+            m = re.fullmatch(r"cmd_tracking([01])", cmd, re.I)
+            if m:
+                d.state.update(tracking=m.group(1) == "1", tracking_ts=iso(utcnow()))
+                d.dirty = True
         except Exception as e:
             log("write err", d.imei, e)
             await db_safe(db.q("UPDATE commands SET status='failed' WHERE id=%s", (cid,)))
